@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sortable Table</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+            font-family: Arial, sans-serif;
+        }
+        
+        th, td {
+            border: 1px solid #444;
+            padding: 12px;
+            text-align: center;
+        }
+        
+        th {
+            background-color: #444;
+            cursor: pointer;
+            position: relative;
+            user-select: none;
+        }
+        
+        th:hover {
+            background-color: #555;
+        }
+        
+        th::after {
+            content: "↕";
+            position: absolute;
+            right: 10px;
+            color: #999;
+        }
+        
+        th.asc::after {
+            content: "↑";
+            color: #222;
+        }
+        
+        th.desc::after {
+            content: "↓";
+            color: #222;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #191919;
+        }
+        
+        tr:hover {
+            background-color: #333;
+        }
+    </style>
+</head>
+<body style="background-color:black;color:white">
+    <table id="sortableTable">
+        <thead>
+            <tr>
+                <th>Ordem</th>
+                <th>Ano</th>
+                <th>Nome</th>
+                <th>Sobrenatural</th>
+                <th>Magia</th>
+                <th>Ambientação</th>
+                <th>Investigação</th>
+                <th>Narrativa</th>
+                <th>Imagem</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>2022</td>
+                <td>The Magicians - s01e01</td>
+                <td>X</td>
+                <td>X</td>
+                <td>o</td>
+                <td>o</td>
+                <td>o</td>
+                <td><img src="thumbs/cabinet_of_curiosities_s01e01.png" style="width:50%;height:50%;"></td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>2015</td>
+                <td>(Guillermo del Toro's) Cabinet of Curiosities - s01e01</td>
+                <td>o</td>
+                <td>X</td>
+                <td>o</td>
+                <td></td>
+                <td>o</td>
+                <td><img src="thumbs/the_magicians_s01e01.png" style="width:50%;height:50%;"></td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>2009</td>
+                <td>True Blood - s02e12</td>
+                <td>X</td>
+                <td>o</td>
+                <td>o</td>
+                <td></td>
+                <td>o</td>
+                <td><img src="thumbs/true_blood_s02e12.png" style="width:50%;height:50%;"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const table = document.getElementById('sortableTable');
+            const headers = table.querySelectorAll('th');
+            const tbody = table.querySelector('tbody');
+            
+            // Track sort direction for each column
+            const sortDirections = Array(headers.length).fill('none'); // none, asc, desc
+            
+            headers.forEach((header, index) => {
+                header.addEventListener('click', () => {
+                    // Get all rows from tbody
+                    const rows = Array.from(tbody.querySelectorAll('tr'));
+                    
+                    // Determine sort direction
+                    let direction = 'asc';
+                    if (sortDirections[index] === 'asc') {
+                        direction = 'desc';
+                    } else if (sortDirections[index] === 'desc') {
+                        direction = 'asc';
+                    }
+                    
+                    // Reset all header classes
+                    headers.forEach(h => {
+                        h.classList.remove('asc', 'desc');
+                    });
+                    
+                    // Set current header class
+                    header.classList.add(direction);
+                    
+                    // Update sort direction tracking
+                    sortDirections[index] = direction;
+                    
+                    // Sort rows based on the clicked column
+                    rows.sort((a, b) => {
+                        const aText = a.cells[index].textContent.trim();
+                        const bText = b.cells[index].textContent.trim();
+                        
+                        if (direction === 'asc') {
+                            return aText.localeCompare(bText);
+                        } else {
+                            return bText.localeCompare(aText);
+                        }
+                    });
+                    
+                    // Remove all existing rows
+                    rows.forEach(row => tbody.removeChild(row));
+                    
+                    // Add sorted rows back to tbody
+                    rows.forEach(row => tbody.appendChild(row));
+                });
+            });
+        });
+    </script>
+</body>
+</html>
